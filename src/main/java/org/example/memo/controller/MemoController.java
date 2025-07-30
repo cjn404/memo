@@ -62,15 +62,23 @@ public class MemoController {
     }
 
     @PutMapping("/{id}")
-    public MemoResponseDto updateMemoByID(
+    public ResponseEntity<MemoResponseDto> updateMemoByID(
             @PathVariable Long id,
             @RequestBody MemoRequestDto dto
     ) {
         Memo memo = memoList.get(id);
 
+        if (memo == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (dto.getTitle() == null || dto.getContents() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         memo.update(dto);
 
-        return new MemoResponseDto(memo);
+        return new ResponseEntity<>(new MemoResponseDto(memo), HttpStatus.OK);
 
     }
 
